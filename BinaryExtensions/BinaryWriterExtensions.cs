@@ -208,5 +208,33 @@ namespace BinaryExtensions
                 binaryWriter.Write(value);
             }
         }
+
+
+        /// <summary>
+        /// Writes the same byte to pad the stream.
+        /// </summary>
+        /// <param name="padByte">Byte to write as padding.</param>
+        /// <param name="padding">Padding value.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The <paramref name="padding"/> parameter can not be negative.</exception>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WritePadding(this BinaryWriter binaryWriter, byte padByte, int padding)
+        {
+            if (padding < 0)
+                throw new ArgumentOutOfRangeException(nameof(padding));
+
+            if (padding <= 1)
+            {
+                return;
+            }
+
+            long currentAddress = binaryWriter.BaseStream.Position;
+            long padAmount = (currentAddress % padding == 0) ? 0 : padding - (currentAddress % padding);
+
+            for (long i = 0; i < padAmount; i++)
+            {
+                binaryWriter.Write(padByte);
+            }
+        }
     }
 }
