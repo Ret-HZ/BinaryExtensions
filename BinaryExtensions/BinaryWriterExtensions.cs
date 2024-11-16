@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.IO;
+using System.Text;
 
 namespace BinaryExtensions
 {
@@ -207,6 +208,41 @@ namespace BinaryExtensions
             {
                 binaryWriter.Write(value);
             }
+        }
+
+
+        /// <summary>
+        /// Writes a string to the current stream and advances the current position of the stream in accordance with the <see cref="Encoding"/> used and the specific characters being written to the stream.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        /// <param name="encoding">Optional text encoding to use.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <remarks>If <paramref name="encoding"/> is <see langword="null"/>, it will use the <see cref="BinaryWriter"/>'s default encoding.</remarks>
+        public static void Write(this BinaryWriter binaryWriter, string value, Encoding encoding = null)
+        {
+            // Use BinaryWriter's encoding by making it write a char array
+            if (encoding == null)
+                binaryWriter.Write(value.ToCharArray());
+            else
+                binaryWriter.Write(encoding.GetBytes(value));
+        }
+
+
+        /// <summary>
+        /// Writes a string to the current stream and advances the current position of the stream in accordance with the <see cref="Encoding"/> used and the specific characters being written to the stream.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        /// <param name="nullTerminator">If set to <see langword="true" />, add null terminator.</param>
+        /// <param name="encoding">Optional text encoding to use.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <remarks>If <paramref name="encoding"/> is <see langword="null"/>, it will use the <see cref="BinaryWriter"/>'s default encoding.</remarks>
+        public static void Write(this BinaryWriter binaryWriter, string value, bool nullTerminator, Encoding encoding = null)
+        {
+            binaryWriter.Write(value, encoding);
+            if (nullTerminator)
+                binaryWriter.Write((byte)0x00);
         }
 
 
