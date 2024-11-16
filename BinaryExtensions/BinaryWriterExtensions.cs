@@ -242,7 +242,11 @@ namespace BinaryExtensions
         {
             binaryWriter.Write(value, encoding);
             if (nullTerminator)
-                binaryWriter.Write((byte)0x00);
+                // Use BinaryWriter's encoding by making it write a char 
+                if (encoding == null)
+                    binaryWriter.Write('\0');
+                else
+                    binaryWriter.Write(encoding.GetBytes("\0"));
         }
 
 
