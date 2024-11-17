@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace BinaryExtensions
 {
@@ -180,6 +182,90 @@ namespace BinaryExtensions
         public static double ReadDouble(this BinaryReader binaryReader, bool isBigEndian)
         {
             return isBigEndian ? BinaryPrimitivesExtensions.ReadDoubleBigEndian(binaryReader.InternalRead(8)) : binaryReader.ReadDouble();
+        }
+
+
+        /// <summary>
+        /// Reads the specified number of characters from the current stream, returns the data in a <see langword="string"/>, and advances the current position in accordance with the <see cref="Encoding"/> used and the specific characters being read from the stream.
+        /// </summary>
+        /// <param name="length">The length of the string (number of characters to read).</param>
+        /// <returns>A string containing data read from the underlying stream. This might be less than the number of characters requested if the end of the stream is reached.</returns>
+        /// <exception cref="ArgumentException">The number of decoded characters to read is greater than <paramref name="length"/>. This can happen if a Unicode decoder returns fallback characters or a surrogate pair.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="length"/> is negative.</exception>
+        public static string ReadStringFixed(this BinaryReader binaryReader, int length)
+        {
+            char[] characters = binaryReader.ReadChars(length);
+            string result = new string(characters);
+            return result;
+        }
+
+
+        /// <summary>
+        /// Reads a string suffixed with the specified <paramref name="token"/> from the current stream and advances the current position in accordance with the <see cref="Encoding"/> used and the specific characters being read from the stream.
+        /// </summary>
+        /// <param name="token">The token to find.</param>
+        /// <returns>A string containing data read from the underlying stream. The <paramref name="token"/> is not part of the string. If the <paramref name="token"/> can not be found, the resulting string will be empty.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="token"/> is null or empty.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        /// <remarks>
+        /// The stream position will be restored if the <paramref name="token"/> can not be found.</remarks>
+        public static string ReadStringToToken(this BinaryReader binaryReader, string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                throw new ArgumentNullException(nameof(token));
+
+            StringBuilder sb = new StringBuilder();
+            char[] tokenBuffer = new char[token.Length];
+            int tokenIndex = 0;
+            bool isTokenMatch = false;
+            long originalStreamPos = binaryReader.BaseStream.Position;
+
+            while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
+            {
+                char c = binaryReader.ReadChar();
+                sb.Append(c);
+
+                // Add to token buffer
+                tokenBuffer[tokenIndex % token.Length] = c;
+                tokenIndex++;
+
+                // Check if the last read characters match the token when reordered
+                if (tokenIndex >= token.Length && new string(tokenBuffer.Skip(tokenIndex % token.Length).Concat(tokenBuffer.Take(tokenIndex % token.Length)).ToArray()) == token)
+                {
+                    // Remove the token from the result string
+                    sb.Length -= token.Length;
+                    isTokenMatch = true;
+                    break;
+                }
+            }
+
+            // Only return the contents of the StringBuilder if the token was found
+            // Otherwise we may return a string when reaching the end of the stream with no matches
+            if (isTokenMatch)
+            {
+                return sb.ToString();
+            }
+            else
+            {
+                binaryReader.BaseStream.Position = originalStreamPos;
+                return string.Empty;
+            }
+        }
+
+
+        /// <summary>
+        /// Reads a string suffixed with a null terminator from the current stream and advances the current position in accordance with the <see cref="Encoding"/> used and the specific characters being read from the stream.
+        /// </summary>
+        /// <returns>A string containing data read from the underlying stream. The null terminator is not part of the string.</returns>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        /// <remarks>The stream position will be restored if the null terminator can not be found.</remarks>
+        public static string ReadStringNullTerminated(this BinaryReader binaryReader)
+        {
+            return binaryReader.ReadStringToToken("\0");
         }
     }
 }
