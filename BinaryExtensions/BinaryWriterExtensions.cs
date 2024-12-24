@@ -7,6 +7,7 @@ namespace BinaryExtensions
 {
     public static class BinaryWriterExtensions
     {
+        #region Write
         /// <summary>
         /// Writes a signed byte to the current stream and advances the stream position by one byte.
         /// </summary>
@@ -248,6 +249,7 @@ namespace BinaryExtensions
                 else
                     binaryWriter.Write(encoding.GetBytes("\0"));
         }
+        #endregion
 
 
         /// <summary>
@@ -276,5 +278,241 @@ namespace BinaryExtensions
                 binaryWriter.Write(padByte);
             }
         }
+
+
+        #region WriteAtPosition
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a signed byte and returns to the original position.
+        /// </summary>
+        /// <param name="value">The signed byte to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, sbyte value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes an unsigned byte and returns to the original position.
+        /// </summary>
+        /// <param name="value">The unsigned byte to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, byte value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a two-byte signed integer and returns to the original position.
+        /// </summary>
+        /// <param name="value">The two-byte signed integer to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, short value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a two-byte unsigned integer and returns to the original position.
+        /// </summary>
+        /// <param name="value">The two-byte unsigned integer to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, ushort value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a four-byte signed integer and returns to the original position.
+        /// </summary>
+        /// <param name="value">The four-byte signed integer to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, int value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a four-byte unsigned integer and returns to the original position.
+        /// </summary>
+        /// <param name="value">The four-byte unsigned integer to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, uint value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes an eight-byte signed integer and returns to the original position.
+        /// </summary>
+        /// <param name="value">The eight-byte signed integer to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, long value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes an eight-byte unsigned integer and returns to the original position.
+        /// </summary>
+        /// <param name="value">The eight-byte unsigned integer to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, ulong value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a four-byte floating-point value and returns to the original position.
+        /// </summary>
+        /// <param name="value">The four-byte floating-point value to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, float value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes an eight-byte floating-point value and returns to the original position.
+        /// </summary>
+        /// <param name="value">The eight-byte floating-point value to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, double value, long offset, bool isBigEndian = false, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, isBigEndian);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a string and returns to the original position.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, string value, long offset, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, false);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a string and returns to the original position.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        /// <param name="nullTerminator">If set to <see langword="true"/>, add null terminator.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, string value, bool nullTerminator, long offset, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, nullTerminator);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+
+
+        /// <summary>
+        /// Moves to the specified position in the stream, writes a string and returns to the original position.
+        /// </summary>
+        /// <param name="value">The string to write.</param>
+        /// <param name="nullTerminator">If set to <see langword="true"/>, add null terminator.</param>
+        /// <param name="encoding">Text encoding to use.</param>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteAtPosition(this BinaryWriter binaryWriter, string value, bool nullTerminator, Encoding encoding, long offset, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            long originalPosition = binaryWriter.BaseStream.Position;
+            binaryWriter.BaseStream.Seek(offset, origin);
+            binaryWriter.Write(value, nullTerminator, encoding);
+            binaryWriter.BaseStream.Position = originalPosition;
+        }
+        #endregion
     }
 }
