@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -245,6 +247,70 @@ namespace BinaryExtensions
                 stream.Position = originalPos;
 
                 return ms.ToArray();
+            }
+        }
+
+
+        /// <summary>
+        /// Saved position stacks for each stream.
+        /// </summary>
+        private static readonly ConcurrentDictionary<Stream, Stack<long>> PositionStacks = new ConcurrentDictionary<Stream, Stack<long>>();
+
+
+        /// <summary>
+        /// Pushes the current position into a stack and moves to a new location relative to the specified origin.
+        /// </summary>
+        /// <param name="offset">A byte offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="ArgumentNullException">The stream is <see langword="null"/>.</exception>
+        /// <exception cref="NotSupportedException">The stream does not support seeking.</exception>
+        public static void PushToPosition(this Stream stream, long offset, SeekOrigin origin = SeekOrigin.Begin)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+            if (!stream.CanSeek)
+                throw new NotSupportedException("Stream does not support seeking.");
+
+            Stack<long> stack = PositionStacks.GetOrAdd(stream, _ => new Stack<long>());
+            stack.Push(stream.Position);
+            stream.Seek(offset, origin);
+        }
+
+
+        /// <summary>
+        /// Pushes the current position into a stack.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The stream is <see langword="null"/>.</exception>
+        public static void PushCurrentPosition(this Stream stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            Stack<long> stack = PositionStacks.GetOrAdd(stream, _ => new Stack<long>());
+            stack.Push(stream.Position);
+        }
+
+
+        /// <summary>
+        /// Pops the last position from the stack and moves to it.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The stream is <see langword="null"/>.</exception>
+        /// <exception cref="NotSupportedException">Stream does not support seeking.</exception>
+        /// <exception cref="InvalidOperationException">No position to pop for the given stream.</exception>
+        public static void PopPosition(this Stream stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+            if (!stream.CanSeek)
+                throw new NotSupportedException("Stream does not support seeking.");
+
+            if (PositionStacks.TryGetValue(stream, out var stack) && stack.Count > 0)
+            {
+                stream.Position = stack.Pop();
+            }
+            else
+            {
+                throw new InvalidOperationException("No position to pop for the given stream.");
             }
         }
     }
