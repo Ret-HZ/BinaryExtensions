@@ -534,5 +534,86 @@ namespace BinaryExtensions
                 binaryWriter.Write(value);
             }
         }
+
+
+        #region WriteByType
+        /// <summary>
+        /// Writes a value of the specified type to the current stream and advances the stream position accordingly.
+        /// </summary>
+        /// <param name="value">The value to write.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        /// <exception cref="NotSupportedException">The specified type is not supported for writing.</exception>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteByType(this BinaryWriter binaryWriter, object value, bool isBigEndian = false)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            Type type = value.GetType();
+
+            if (type == typeof(sbyte))
+            {
+                binaryWriter.Write((sbyte)value);
+            }
+            else if (type == typeof(byte))
+            {
+                binaryWriter.Write((byte)value);
+            }
+            else if (type == typeof(short))
+            {
+                binaryWriter.Write((short)value, isBigEndian);
+            }
+            else if (type == typeof(ushort))
+            {
+                binaryWriter.Write((ushort)value, isBigEndian);
+            }
+            else if (type == typeof(int))
+            {
+                binaryWriter.Write((int)value, isBigEndian);
+            }
+            else if (type == typeof(uint))
+            {
+                binaryWriter.Write((uint)value, isBigEndian);
+            }
+            else if (type == typeof(long))
+            {
+                binaryWriter.Write((long)value, isBigEndian);
+            }
+            else if (type == typeof(ulong))
+            {
+                binaryWriter.Write((ulong)value, isBigEndian);
+            }
+            else if (type == typeof(float))
+            {
+                binaryWriter.Write((float)value, isBigEndian);
+            }
+            else if (type == typeof(double))
+            {
+                binaryWriter.Write((double)value, isBigEndian);
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported type '{type.Name}'.");
+            }
+        }
+
+
+        /// <summary>
+        /// Writes a value of the specified type to the current stream and advances the stream position accordingly.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the value to write.</typeparam>
+        /// <param name="value">The value to write.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        /// <exception cref="NotSupportedException">The specified type is not supported for writing.</exception>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void Write<T>(this BinaryWriter binaryWriter, T value, bool isBigEndian = false)
+        {
+            binaryWriter.WriteByType(value, isBigEndian);
+        }
+        #endregion
     }
 }

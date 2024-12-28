@@ -29,6 +29,7 @@ namespace BinaryExtensions
         }
 
 
+        #region ReadNumeric
         /// <summary>
         /// Reads a signed byte from the current stream and advances the current position of the stream by one byte.
         /// </summary>
@@ -247,8 +248,10 @@ namespace BinaryExtensions
         {
             return isBigEndian ? BinaryPrimitivesExtensions.ReadDoubleBigEndian(binaryReader.InternalRead(8)) : binaryReader.ReadDouble();
         }
+        #endregion
 
 
+        #region ReadString
         /// <summary>
         /// Reads the specified number of characters from the current stream, returns the data in a <see langword="string"/>, and advances the current position in accordance with the <see cref="Encoding"/> used and the specific characters being read from the stream.
         /// </summary>
@@ -331,5 +334,88 @@ namespace BinaryExtensions
         {
             return binaryReader.ReadStringToToken("\0");
         }
+        #endregion
+
+
+        #region ReadByType
+        /// <summary>
+        /// Reads a value of the specified type from the current stream and advances the stream position accordingly.
+        /// </summary>
+        /// <param name="type">The <see cref="Type"/> of the value to read.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to read as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <returns>An object representing the value read from the stream, castable to the specified type.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/>.</exception>
+        /// <exception cref="NotSupportedException">The specified type is not supported for reading.</exception>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        /// <remarks><see cref="BinaryReader"/> does not restore the file position after an unsuccessful read.</remarks>
+        public static object ReadByType(this BinaryReader binaryReader, Type type, bool isBigEndian = false)
+        {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            if (type == typeof(sbyte))
+            {
+                return binaryReader.ReadSByte();
+            }
+            else if (type == typeof(byte))
+            {
+                return binaryReader.ReadByte();
+            }
+            else if (type == typeof(short))
+            {
+                return binaryReader.ReadInt16(isBigEndian);
+            }
+            else if (type == typeof(ushort))
+            {
+                return binaryReader.ReadUInt16(isBigEndian);
+            }
+            else if (type == typeof(int))
+            {
+                return binaryReader.ReadInt32(isBigEndian);
+            }
+            else if (type == typeof(uint))
+            {
+                return binaryReader.ReadUInt32(isBigEndian);
+            }
+            else if (type == typeof(long))
+            {
+                return binaryReader.ReadInt64(isBigEndian);
+            }
+            else if (type == typeof(ulong))
+            {
+                return binaryReader.ReadUInt64(isBigEndian);
+            }
+            else if (type == typeof(float))
+            {
+                return binaryReader.ReadSingle(isBigEndian);
+            }
+            else if (type == typeof(double))
+            {
+                return binaryReader.ReadDouble(isBigEndian);
+            }
+
+            throw new NotSupportedException($"Unsupported type '{type.Name}'.");
+        }
+
+
+        /// <summary>
+        /// Reads a value of the specified type from the current stream and advances the stream position accordingly.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the value to read.</typeparam>
+        /// <param name="isBigEndian"><see langword="true"/> to read as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <returns>An object representing the value read from the stream, castable to the specified type.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="type"/> is <see langword="null"/>.</exception>
+        /// <exception cref="NotSupportedException">The specified type is not supported for reading.</exception>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        /// <remarks><see cref="BinaryReader"/> does not restore the file position after an unsuccessful read.</remarks>
+        public static object Read<T>(this BinaryReader binaryReader, bool isBigEndian = false)
+        {
+            return binaryReader.ReadByType(typeof(T), isBigEndian);
+        }
+        #endregion
     }
 }
