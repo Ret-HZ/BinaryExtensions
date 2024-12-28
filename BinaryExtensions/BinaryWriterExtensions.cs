@@ -514,5 +514,25 @@ namespace BinaryExtensions
             binaryWriter.BaseStream.Position = originalPosition;
         }
         #endregion
+
+
+        /// <summary>
+        /// Repeatedly writes an unsigned byte to the current stream as many times as specified.
+        /// </summary>
+        /// <param name="value">The unsigned byte to write.</param>
+        /// <param name="times">The amount of times the <paramref name="value"/> byte will be written.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The <paramref name="times"/> parameter can not be negative.</exception>
+        public static void WriteTimes(this BinaryWriter binaryWriter, byte value, long times)
+        {
+            if (times < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(times));
+            }
+
+            for (long i = 0; i < times; i++)
+            {
+                binaryWriter.Write(value);
+            }
+        }
     }
 }
