@@ -96,6 +96,70 @@ namespace BinaryExtensions
 
 
         /// <summary>
+        /// Reads a 3-byte signed integer from the current stream and advances the position of the stream by three bytes.
+        /// </summary>
+        /// <param name="isBigEndian"><see langword="true"/> to read as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <returns>A 3-byte signed integer read from the current stream.</returns>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        /// <remarks><see cref="BinaryReader"/> does not restore the file position after an unsuccessful read.</remarks>
+        public static int ReadInt24(this BinaryReader binaryReader, bool isBigEndian = false)
+        {
+            byte[] bytes = binaryReader.ReadBytes(3);
+            if (bytes.Length < 3)
+                throw new EndOfStreamException("Not enough bytes to read a 3-byte signed integer.");
+
+            int value;
+            if (isBigEndian)
+            {
+                value = (bytes[0] << 16) | (bytes[1] << 8) | bytes[2];
+            }
+            else
+            {
+                value = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16);
+            }
+
+            // Sign extend if the 24th bit is set
+            if ((value & 0x800000) != 0)
+            {
+                value |= unchecked((int)0xFF000000);
+            }
+
+            return value;
+        }
+
+
+        /// <summary>
+        /// Reads a 3-byte unsigned integer from the current stream and advances the position of the stream by three bytes.
+        /// </summary>
+        /// <param name="isBigEndian"><see langword="true"/> to read as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <returns>A 3-byte unsigned integer read from the current stream.</returns>
+        /// <exception cref="EndOfStreamException">The end of the stream is reached.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        /// <remarks><see cref="BinaryReader"/> does not restore the file position after an unsuccessful read.</remarks>
+        public static uint ReadUInt24(this BinaryReader binaryReader, bool isBigEndian = false)
+        {
+            byte[] bytes = binaryReader.ReadBytes(3);
+            if (bytes.Length < 3)
+                throw new EndOfStreamException("Not enough bytes to read a 3-byte unsigned integer.");
+
+            uint value;
+            if (isBigEndian)
+            {
+                value = (uint)((bytes[0] << 16) | (bytes[1] << 8) | bytes[2]);
+            }
+            else
+            {
+                value = (uint)(bytes[0] | (bytes[1] << 8) | (bytes[2] << 16));
+            }
+
+            return value;
+        }
+
+
+        /// <summary>
         /// Reads a 4-byte signed integer from the current stream and advances the position of the stream by four bytes.
         /// </summary>
         /// <param name="isBigEndian"><see langword="true"/> to read as Big Endian, <see langword="false"/> for Little Endian.</param>
