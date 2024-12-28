@@ -81,6 +81,66 @@ namespace BinaryExtensions
 
 
         /// <summary>
+        /// Writes a three-byte signed integer to the current stream and advances the stream position by three bytes.
+        /// </summary>
+        /// <param name="value">The three-byte signed integer to write.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The <paramref name="value"/> parameter does not fit in 24-bits.</exception>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteInt24(this BinaryWriter binaryWriter, int value, bool isBigEndian = false)
+        {
+            if (value < -8388608 || value > 8388607)
+                throw new ArgumentOutOfRangeException(nameof(value));
+
+            byte[] bytes = new byte[3];
+            if (isBigEndian)
+            {
+                bytes[0] = (byte)((value >> 16) & 0xFF);
+                bytes[1] = (byte)((value >> 8) & 0xFF);
+                bytes[2] = (byte)(value & 0xFF);
+            }
+            else
+            {
+                bytes[0] = (byte)(value & 0xFF);
+                bytes[1] = (byte)((value >> 8) & 0xFF);
+                bytes[2] = (byte)((value >> 16) & 0xFF);
+            }
+            binaryWriter.Write(bytes);
+        }
+
+
+        /// <summary>
+        /// Writes a three-byte unsigned integer to the current stream and advances the stream position by three bytes.
+        /// </summary>
+        /// <param name="value">The three-byte unsigned integer to write.</param>
+        /// <param name="isBigEndian"><see langword="true"/> to write as Big Endian, <see langword="false"/> for Little Endian.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The <paramref name="value"/> parameter does not fit in 24-bits.</exception>
+        /// <exception cref="IOException">An I/O error occurs.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        public static void WriteUInt24(this BinaryWriter binaryWriter, uint value, bool isBigEndian = false)
+        {
+            if (value > 0xFFFFFF)
+                throw new ArgumentOutOfRangeException(nameof(value));
+
+            byte[] bytes = new byte[3];
+            if (isBigEndian)
+            {
+                bytes[0] = (byte)((value >> 16) & 0xFF);
+                bytes[1] = (byte)((value >> 8) & 0xFF);
+                bytes[2] = (byte)(value & 0xFF);
+            }
+            else
+            {
+                bytes[0] = (byte)(value & 0xFF);
+                bytes[1] = (byte)((value >> 8) & 0xFF);
+                bytes[2] = (byte)((value >> 16) & 0xFF);
+            }
+            binaryWriter.Write(bytes);
+        }
+
+
+        /// <summary>
         /// Writes a four-byte signed integer to the current stream and advances the stream position by four bytes.
         /// </summary>
         /// <param name="value">The four-byte signed integer to write.</param>
