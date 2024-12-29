@@ -670,7 +670,7 @@ namespace BinaryExtensions
         /// <exception cref="NotSupportedException">The specified type is not supported for writing.</exception>
         /// <exception cref="IOException">An I/O error occurs.</exception>
         /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
-        public static void Write<T>(this BinaryWriter binaryWriter, T value, bool isBigEndian = false)
+        public static void WriteByType<T>(this BinaryWriter binaryWriter, T value, bool isBigEndian = false)
         {
             binaryWriter.WriteByType(value, isBigEndian);
         }
