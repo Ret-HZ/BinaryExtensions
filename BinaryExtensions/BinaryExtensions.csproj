@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Title>$(AssemblyName)</Title>
+    <Description>BinaryExtensions adds Big Endian support to .NET's BinaryReader and BinaryWriter, among other quality of life improvements.</Description>
+    <Authors>Ret-HZ</Authors>
+    <Copyright>Copyright © 2024 Christopher Holzmann Pérez</Copyright>
+    <RepositoryUrl>https://github.com/Ret-HZ/BinaryExtensions</RepositoryUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +21,13 @@
     <Content Include="licenses.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
