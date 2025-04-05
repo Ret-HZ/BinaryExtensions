@@ -417,5 +417,36 @@ namespace BinaryExtensions
             return binaryReader.ReadByType(typeof(T), isBigEndian);
         }
         #endregion
+
+
+        #region SkipBytes
+        /// <summary>
+        /// Skips a specified amount of bytes and advances the stream position accordingly.
+        /// </summary>
+        /// <param name="count">The amount of bytes to skip.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="count"/> parameter can not be negative.</exception>
+        /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
+        /// <exception cref="IOException">An I/O error occurred.</exception>
+        public static void SkipBytes(this BinaryReader binaryReader, long count)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            if (binaryReader.BaseStream.CanSeek)
+            {
+                binaryReader.BaseStream.Seek(count, SeekOrigin.Current);
+            }
+            else
+            {
+                for (long i = 0; i < count; i++)
+                {
+                    if (binaryReader.BaseStream.ReadByte() == -1)
+                        break; // End of stream
+                }
+            }
+        }
+        #endregion
     }
 }
